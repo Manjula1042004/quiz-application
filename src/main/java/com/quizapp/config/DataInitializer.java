@@ -39,6 +39,10 @@ public class DataInitializer implements CommandLineRunner {
         quiz.setIsTemplate(false); // ← MUST BE FALSE
         quiz.setCreatedAt(LocalDateTime.now());
 
+        quiz.setIsPublic(true);      // ← MUST be true
+        quiz.setEnabled(true);       // ← MUST be true
+        quiz.setIsTemplate(false);
+
 
         List<Question> questions = new ArrayList<>();
 
