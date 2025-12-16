@@ -649,4 +649,9 @@ public class QuizController {
 
         return "redirect:/quiz/edit/" + quizId;
     }
+
+    @GetMapping("/")
+    public String redirectToQuizList() {
+        return "redirect:/quiz/list";
+    }
 }
