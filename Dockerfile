@@ -5,8 +5,8 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Second stage: create the final image (UPDATED LINE)
-FROM openjdk:17-jdk-slim-buster
+# Second stage: create the final image (UPDATED LINE - Recommended Fix)
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
