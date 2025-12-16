@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            padding: 30px;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .score-excellent {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .score-good {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .score-average {
+            background-color: #ffeaa7;
+            color: #856404;
+        }
+        .score-poor {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .quiz-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📊 Quiz Results</h1>
+    </div>
+    <div class="content">
+        <h2>Hello, <span th:text="${username}">User</span>!</h2>
+        <p>You have completed the quiz: <strong th:text="${quizTitle}">Quiz Title</strong></p>
+
+        <!-- SIMPLIFIED: No complex Thymeleaf expressions - using pre-determined CSS class -->
+        <div th:class="${'score ' + scoreClass}">
+            <span th:text="${performanceEmoji}">🎯</span>
+            Your Score: <span th:text="${score}">0</span>%
+        </div>
+
+        <div class="quiz-details">
+            <h4>Quiz Details:</h4>
+            <p><strong>Quiz:</strong> <span th:text="${quizTitle}">Quiz Title</span></p>
+            <p><strong>Score:</strong> <span th:text="${correctAnswers}">0</span> out of <span th:text="${totalQuestions}">0</span> questions correct</p>
+            <p><strong>Percentage:</strong> <span th:text="${score}">0</span>%</p>
+            <p><strong>Completed on:</strong> <span th:text="${completionDate}">Date</span></p>
+            <p><strong>Performance:</strong> <span th:text="${performance}">Feedback</span></p>
+        </div>
+
+        <p>You can view detailed results and review your answers by logging into your account.</p>
+
+        <p style="text-align: center;">
+            <a href="http://localhost:8080/dashboard" class="button">View Detailed Results</a>
+        </p>
+
+        <p>Thank you for participating in our quiz!</p>
+
+        <p>Best regards,<br>The QuizApp Team</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 QuizApp. All rights reserved.</p>
+        <p>This is an automated email, please do not reply.</p>
+    </div>
+</div>
+</body>
+</html>

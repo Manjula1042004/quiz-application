@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - QuizMaster</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #e6eeff;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --info: #118ab2;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--success), #05c291);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: linear-gradient(135deg, #ffffff, #e2e8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .auth-body {
+            padding: 2.5rem 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            color: var(--success);
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .form-control {
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 0 0.2rem rgba(6, 214, 160, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--success);
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger);
+        }
+
+        .input-group {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .input-group .form-control {
+            border-right: none;
+        }
+
+        .input-group .btn {
+            border: 2px solid var(--gray-light);
+            border-left: none;
+            background: white;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .input-group .btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            color: var(--gray);
+        }
+
+        .form-check {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input {
+            width: 1.1em;
+            height: 1.1em;
+            margin-top: 0.15em;
+            border: 2px solid var(--gray-light);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .form-check-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #05c291);
+            box-shadow: 0 4px 15px rgba(6, 214, 160, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(6, 214, 160, 0.4);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--success), #05c291);
+            color: white;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, var(--danger), #e63946);
+            color: white;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, var(--warning), #ffb700);
+            color: black;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, var(--info), #0f7a9d);
+            color: white;
+        }
+
+        /* Password Strength Meter */
+        .password-strength {
+            margin-top: 1rem;
+        }
+
+        .strength-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--gray-light);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 0%;
+        }
+
+        .strength-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Requirement List */
+        .requirement-list {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            border: 1px solid var(--gray-light);
+        }
+
+        .requirement-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement-item i {
+            width: 16px;
+            margin-right: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .requirement-met {
+            color: var(--success);
+        }
+
+        .requirement-met i {
+            color: var(--success);
+        }
+
+        .requirement-not-met {
+            color: var(--gray);
+        }
+
+        .requirement-not-met i {
+            color: var(--gray);
+        }
+
+        /* Role Selection */
+        .role-selection {
+            margin: 2rem 0;
+        }
+
+        .role-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .role-title i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .role-option {
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .role-option.active {
+            border-color: var(--success);
+            background: linear-gradient(135deg, #f8fff9, #f0fff4);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .role-option.active::before {
+            background: linear-gradient(135deg, var(--success), #05c291);
+        }
+
+        .role-option.participant.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f0f4ff, #e6eeff);
+        }
+
+        .role-option.participant.active::before {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .role-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .role-option.active .role-icon {
+            color: var(--success);
+            transform: scale(1.1);
+        }
+
+        .role-option.participant.active .role-icon {
+            color: var(--primary);
+        }
+
+        .role-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .role-description {
+            font-size: 0.8rem;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .auth-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 576px) {
+            .auth-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+
+            .requirement-list {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-border {
+            animation: spin 0.75s linear infinite;
+        }
+
+        /* Validation states */
+        .validation-feedback {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .validation-feedback i {
+            margin-right: 0.5rem;
+        }
+
+        .text-success {
+            color: var(--success) !important;
+        }
+
+        .text-danger {
+            color: var(--danger) !important;
+        }
+    </style>
+</head>
+<body>
+<!-- Floating Background Shapes -->
+<div class="floating-shape shape-1"></div>
+<div class="floating-shape shape-2"></div>
+<div class="floating-shape shape-3"></div>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="auth-header-content">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h1 class="auth-title">Join QuizMaster</h1>
+                <p class="auth-subtitle">Create your account and start your learning journey</p>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="auth-body">
+            <!-- Success Message -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Registration Form -->
+            <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm" novalidate>
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>Username
+                    </label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}"
+                           placeholder="Enter your username" required minlength="3" maxlength="50">
+                    <div class="form-text">Choose a unique username (3-50 characters)</div>
+                    <div th:if="${#fields.hasErrors('username')}" class="validation-feedback text-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{username}"></span>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i>Email Address
+                    </label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}"
+                           placeholder="Enter your email" required>
+                    <div class="form-text">We'll send a verification link to this email</div>
+                    <div th:if="${#fields.hasErrors('email')}" class="validation-feedback text-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{email}"></span>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                               placeholder="Create a strong password" required minlength="8" maxlength="128">
+                        <button class="btn" type="button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <!-- Password Strength Meter -->
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div id="passwordStrengthBar" class="strength-fill"></div>
+                        </div>
+                        <div id="passwordStrengthText" class="strength-text"></div>
+                    </div>
+
+                    <!-- Password Requirements -->
+                    <div class="requirement-list">
+                        <div class="requirement-title">Password Requirements:</div>
+                        <div class="requirement-item" id="req-length">
+                            <i class="fas fa-circle"></i>
+                            <span>At least 8 characters</span>
+                        </div>
+                        <div class="requirement-item" id="req-uppercase">
+                            <i class="fas fa-circle"></i>
+                            <span>One uppercase letter (A-Z)</span>
+                        </div>
+                        <div class="requirement-item" id="req-lowercase">
+                            <i class="fas fa-circle"></i>
+                            <span>One lowercase letter (a-z)</span>
+                        </div>
+                        <div class="requirement-item" id="req-digit">
+                            <i class="fas fa-circle"></i>
+                            <span>One number (0-9)</span>
+                        </div>
+                        <div class="requirement-item" id="req-special">
+                            <i class="fas fa-circle"></i>
+                            <span>One special character (!@#$% etc.)</span>
+                        </div>
+                    </div>
+
+                    <div th:if="${#fields.hasErrors('password')}" class="validation-feedback text-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:errors="*{password}"></span>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">
+                        <i class="fas fa-lock"></i>Confirm Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="confirmPassword"
+                               th:field="*{confirmPassword}" placeholder="Re-enter your password" required minlength="8">
+                        <button class="btn" type="button" id="toggleConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-feedback text-danger" id="passwordMatchError" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Passwords do not match</span>
+                    </div>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="role-selection">
+                    <div class="role-title">
+                        <i class="fas fa-user-tag"></i>Select Account Type
+                    </div>
+                    <input type="hidden" th:field="*{role}" id="selectedRole" value="PARTICIPANT">
+                    <div class="role-options">
+                        <div class="role-option participant active" data-role="PARTICIPANT" onclick="selectRole(this)">
+                            <div class="role-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="role-name">Participant</div>
+                            <div class="role-description">
+                                Take quizzes, track progress, and learn at your own pace
+                            </div>
+                        </div>
+                        <div class="role-option" data-role="ADMIN" onclick="selectRole(this)">
+                            <div class="role-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="role-name">Admin</div>
+                            <div class="role-description">
+                                Create and manage quizzes, analyze results
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms">
+                        I agree to the <a href="#" class="auth-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> and <a href="#" class="auth-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success btn-lg py-3" id="submitBtn">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="auth-links">
+                <p class="mb-2">Already have an account?</p>
+                <a th:href="@{/login}" class="auth-link fw-bold">
+                    <i class="fas fa-sign-in-alt me-1"></i>Sign In to Your Account
+                </a>
+            </div>
+
+            <!-- Back to Home -->
+            <div class="text-center mt-4">
+                <a th:href="@{/}" class="back-link">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Account Registration</h6>
+                <p>You must provide accurate and complete information during registration. Accounts with false information may be suspended.</p>
+
+                <h6>2. User Responsibilities</h6>
+                <p>You are responsible for maintaining the confidentiality of your account credentials and all activities under your account.</p>
+
+                <h6>3. Quiz Content</h6>
+                <p>All quiz content is intellectual property and may not be reproduced, distributed, or used commercially without permission.</p>
+
+                <h6>4. Privacy</h6>
+                <p>We respect your privacy and protect your personal information according to our comprehensive privacy policy.</p>
+
+                <h6>5. Acceptable Use</h6>
+                <p>You agree not to misuse the platform, attempt to compromise its security, or engage in any fraudulent activities.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Data Collection</h6>
+                <p>We collect only necessary information for account creation and platform functionality.</p>
+
+                <h6>Data Usage</h6>
+                <p>Your data is used solely for providing and improving our quiz platform services.</p>
+
+                <h6>Data Protection</h6>
+                <p>We implement industry-standard security measures to protect your personal information.</p>
+
+                <h6>Third Parties</h6>
+                <p>We do not sell or share your personal data with third parties for marketing purposes.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Password visibility toggle
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+            this.classList.add('active');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+            this.classList.remove('active');
+        }
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const confirmInput = document.getElementById('confirmPassword');
+        const icon = this.querySelector('i');
+        if (confirmInput.type === 'password') {
+            confirmInput.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+            this.classList.add('active');
+        } else {
+            confirmInput.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+            this.classList.remove('active');
+        }
+    });
+
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        updatePasswordStrength(password);
+        validatePasswordMatch();
+    });
+
+    function updatePasswordStrength(password) {
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        const strengthText = document.getElementById('passwordStrengthText');
+
+        let strength = 0;
+        let requirements = {
+            length: false,
+            uppercase: false,
+            lowercase: false,
+            digit: false,
+            special: false
+        };
+
+        // Check requirements
+        if (password.length >= 8) {
+            strength += 20;
+            requirements.length = true;
+        }
+
+        if (/[A-Z]/.test(password)) {
+            strength += 20;
+            requirements.uppercase = true;
+        }
+
+        if (/[a-z]/.test(password)) {
+            strength += 20;
+            requirements.lowercase = true;
+        }
+
+        if (/[0-9]/.test(password)) {
+            strength += 20;
+            requirements.digit = true;
+        }
+
+        if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+            strength += 20;
+            requirements.special = true;
+        }
+
+        // Update requirement indicators
+        updateRequirementIndicator('req-length', requirements.length);
+        updateRequirementIndicator('req-uppercase', requirements.uppercase);
+        updateRequirementIndicator('req-lowercase', requirements.lowercase);
+        updateRequirementIndicator('req-digit', requirements.digit);
+        updateRequirementIndicator('req-special', requirements.special);
+
+        // Update strength bar
+        strengthBar.style.width = strength + '%';
+
+        if (strength <= 20) {
+            strengthBar.style.background = 'linear-gradient(135deg, var(--danger), #e63946)';
+            strengthText.textContent = 'Very Weak';
+            strengthText.className = 'strength-text text-danger';
+        } else if (strength <= 40) {
+            strengthBar.style.background = 'linear-gradient(135deg, var(--warning), #ffb700)';
+            strengthText.textContent = 'Weak';
+            strengthText.className = 'strength-text text-warning';
+        } else if (strength <= 60) {
+            strengthBar.style.background = 'linear-gradient(135deg, var(--info), #0f7a9d)';
+            strengthText.textContent = 'Fair';
+            strengthText.className = 'strength-text text-info';
+        } else if (strength <= 80) {
+            strengthBar.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            strengthText.textContent = 'Good';
+            strengthText.className = 'strength-text text-primary';
+        } else {
+            strengthBar.style.background = 'linear-gradient(135deg, var(--success), #05c291)';
+            strengthText.textContent = 'Strong';
+            strengthText.className = 'strength-text text-success';
+        }
+    }
+
+    function updateRequirementIndicator(elementId, met) {
+        const element = document.getElementById(elementId);
+        if (met) {
+            element.className = 'requirement-item requirement-met';
+            element.querySelector('i').className = 'fas fa-check-circle';
+        } else {
+            element.className = 'requirement-item requirement-not-met';
+            element.querySelector('i').className = 'fas fa-circle';
+        }
+    }
+
+    // Password match validation
+    function validatePasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorElement = document.getElementById('passwordMatchError');
+        const confirmInput = document.getElementById('confirmPassword');
+
+        if (confirmPassword && password !== confirmPassword) {
+            errorElement.style.display = 'flex';
+            confirmInput.classList.add('is-invalid');
+            confirmInput.classList.remove('is-valid');
+            return false;
+        } else if (confirmPassword) {
+            errorElement.style.display = 'none';
+            confirmInput.classList.remove('is-invalid');
+            confirmInput.classList.add('is-valid');
+            return true;
+        } else {
+            errorElement.style.display = 'none';
+            confirmInput.classList.remove('is-invalid', 'is-valid');
+            return true;
+        }
+    }
+
+    document.getElementById('confirmPassword').addEventListener('input', validatePasswordMatch);
+
+    // Role selection
+    function selectRole(element) {
+        // Remove active class from all role options
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.classList.remove('active');
+        });
+
+        // Add active class to clicked option
+        element.classList.add('active');
+
+        // Update hidden input
+        document.getElementById('selectedRole').value = element.getAttribute('data-role');
+    }
+
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Validate password match
+        if (!validatePasswordMatch()) {
+            e.preventDefault();
+            showValidationError('Passwords do not match! Please check and try again.');
+            return false;
+        }
+
+        // Validate terms acceptance
+        const termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+            e.preventDefault();
+            showValidationError('You must accept the Terms and Conditions to register.');
+            return false;
+        }
+
+        // Validate password strength
+        const password = document.getElementById('password').value;
+        if (password.length < 8) {
+            e.preventDefault();
+            showValidationError('Password must be at least 8 characters long.');
+            return false;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Creating Account...';
+
+        return true;
+    });
+
+    // Show validation error
+    function showValidationError(message) {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3';
+        toast.style.zIndex = '9999';
+        toast.style.maxWidth = '400px';
+        toast.innerHTML = `
+            <i class="fas fa-exclamation-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close ms-2" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(toast);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 5000);
+    }
+
+    // Real-time validation
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid

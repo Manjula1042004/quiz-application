@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Two-Factor Authentication</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --success: #06d6a0;
+            --danger: #ef476f;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3a56d4 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 14px 16px;
+            border: 2px solid #eef2f7;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #3a56d4 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .qr-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f7;
+            text-align: center;
+        }
+
+        .secret-key {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            border: 1px dashed #dee2e6;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dee2e6;
+            margin: 0 5px;
+        }
+
+        .step.active {
+            background: var(--primary);
+        }
+
+        .feature-list {
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2><i class="fas fa-shield-alt me-2"></i>Two-Factor Authentication</h2>
+            <p class="mb-0">Add an extra layer of security to your account</p>
+        </div>
+
+        <div class="auth-body">
+            <div class="step-indicator">
+                <div class="step active"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="feature-list">
+                <h6><i class="fas fa-info-circle me-2 text-primary"></i>Why enable 2FA?</h6>
+                <ul class="small mb-0">
+                    <li>Protects your account from unauthorized access</li>
+                    <li>Required for sensitive operations</li>
+                    <li>Adds an extra security layer beyond passwords</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h5 class="mb-3">Step 1: Scan QR Code</h5>
+                <p class="text-muted">Open your authenticator app and scan this QR code:</p>
+
+                <div class="qr-container mb-3">
+                    <img th:src="${qrCodeUrl}" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+                </div>
+
+                <p class="text-muted small">
+                    Can't scan the QR code? Use this secret key:
+                </p>
+                <div class="secret-key text-center">
+                    <code th:text="${secretKey}"></code>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h5 class="mb-3">Step 2: Enter Verification Code</h5>
+                <form th:action="@{/2fa/verify}" method="post">
+                    <div class="mb-3">
+                        <label for="verificationCode" class="form-label">6-digit code from your app</label>
+                        <input type="text" class="form-control text-center" id="verificationCode"
+                               name="verificationCode" required maxlength="6" pattern="[0-9]{6}"
+                               placeholder="000000" style="font-size: 1.2rem; letter-spacing: 5px;">
+                        <div class="form-text">Enter the 6-digit code generated by your authenticator app</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary py-3">
+                            <i class="fas fa-shield-alt me-2"></i>Verify and Enable 2FA
+                        </button>
+                        <a th:href="@{/dashboard}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    Don't have an authenticator app? We recommend
+                    <strong>Google Authenticator</strong> or <strong>Authy</strong>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Auto-focus on verification code input
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('verificationCode').focus();
+    });
+
+    // Format verification code input
+    document.getElementById('verificationCode').addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 6) {
+            this.value = this.value.slice(0, 6);
+        }
+    });
+
+    // Real-time validation
+    document.getElementById('verificationCode').addEventListener('blur', function() {
+        if (this.value.length !== 6) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+</body>
+</html>

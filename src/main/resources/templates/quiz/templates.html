@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Templates - Online Quiz Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">QuizApp</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" th:href="@{/admin/dashboard}">Back to Dashboard</a>
+            <a class="nav-link" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <h1><i class="fas fa-clone me-2"></i>Quiz Templates</h1>
+            <p class="lead">Save quizzes as templates for quick reuse</p>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Save Current Quiz as Template -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-save me-2"></i>Save Quiz as Template</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/quiz/save-as-template/{id}(id=${currentQuizId})}" method="post" th:if="${currentQuizId}">
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="templateName"
+                               placeholder="Enter template name" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save me-1"></i>Save as Template
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div th:unless="${currentQuizId}" class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Create or edit a quiz to save it as a template.
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Templates -->
+    <div class="card">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-clone me-2"></i>Available Templates</h5>
+            <span class="badge bg-light text-success" th:text="${quizTemplates != null ? quizTemplates.size() : 0}">0</span>
+        </div>
+        <div class="card-body">
+            <div th:if="${quizTemplates == null or quizTemplates.empty}" class="text-center py-5">
+                <i class="fas fa-clone fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No quiz templates available yet.</p>
+                <p class="text-muted">Save your frequently used quizzes as templates for quick reuse.</p>
+            </div>
+
+            <div th:if="${quizTemplates != null and not quizTemplates.empty}" class="row">
+                <div th:each="template : ${quizTemplates}" class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary" th:text="${template.title}">Template Title</h5>
+                            <p class="card-text" th:text="${template.description} ?: 'No description'"></p>
+
+                            <div class="quiz-meta mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <strong>Time Limit:</strong> <span th:text="${template.timeLimit}">0</span> min<br>
+                                    <i class="fas fa-question-circle me-1"></i>
+                                    <strong>Questions:</strong> <span th:text="${template.questions != null ? template.questions.size() : 0}">0</span><br>
+                                    <i class="fas fa-user me-1"></i>
+                                    <strong>Created by:</strong> <span th:text="${template.createdBy.username}">Admin</span>
+                                </small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <form th:action="@{/quiz/create-from-template/{id}(id=${template.id})}" method="post" class="d-inline">
+                                    <input type="text" class="form-control mb-2" name="newTitle"
+                                           th:value="'Copy of ' + ${template.title}" required>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-copy me-1"></i>Create from Template
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Templates -->
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Question Templates</h5>
+            <span class="badge bg-light text-info" th:text="${questionTemplates != null ? questionTemplates.size() : 0}">0</span>
+        </div>
+        <div class="card-body">
+            <div th:if="${questionTemplates == null or questionTemplates.empty}" class="text-center py-4">
+                <i class="fas fa-question-circle fa-2x text-muted mb-3"></i>
+                <p class="text-muted">No question templates available.</p>
+            </div>
+
+            <div th:if="${questionTemplates != null and not questionTemplates.empty}">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Question Text</th>
+                            <th>Difficulty</th>
+                            <th>Options</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="question : ${questionTemplates}">
+                            <td>
+                                <strong th:text="${question.questionText}"></strong>
+                                <div th:if="${question.explanation}" class="small text-muted">
+                                    <em th:text="${question.explanation}"></em>
+                                </div>
+                            </td>
+                            <td>
+                                    <span th:switch="${question.difficultyLevel}" class="badge">
+                                        <span th:case="EASY" class="badge bg-success">Easy</span>
+                                        <span th:case="MEDIUM" class="badge bg-warning">Medium</span>
+                                        <span th:case="HARD" class="badge bg-danger">Hard</span>
+                                    </span>
+                            </td>
+                            <td>
+                                <small>
+                                        <span th:each="option, iter : ${question.options}">
+                                            <span th:if="${iter.index == question.correctAnswerIndex}"
+                                                  class="text-success fw-bold" th:text="${option}"></span>
+                                            <span th:if="${iter.index != question.correctAnswerIndex}"
+                                                  th:text="${option}"></span>
+                                            <span th:if="${!iter.last}">, </span>
+                                        </span>
+                                </small>
+                            </td>
+                            <td>
+                                <div th:if="${question.tags != null and not question.tags.empty}">
+                                        <span th:each="tag : ${question.tags}" class="badge bg-secondary me-1">
+                                            <span th:text="${tag.name}"></span>
+                                        </span>
+                                </div>
+                                <span th:if="${question.tags == null or question.tags.empty}" class="text-muted">No tags</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary"
+                                        onclick="addQuestionToCurrentQuiz([[${question.id}]])">
+                                    <i class="fas fa-plus"></i> Add to Quiz
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function addQuestionToCurrentQuiz(questionId) {
+        // Implementation to add question to current quiz
+        alert('Feature: Add question ' + questionId + ' to current quiz');
+        // You would typically make an AJAX call here
+    }
+</script>
+</body>
+</html>

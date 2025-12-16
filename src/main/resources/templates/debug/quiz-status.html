@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Quiz Status</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>🔧 Debug Quiz Status</h1>
+
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Database Statistics
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Quizzes in DB:</strong> <span th:text="${allQuizzes != null ? allQuizzes.size() : 0}">0</span></p>
+                    <p><strong>Public Quizzes Found:</strong> <span th:text="${publicQuizzes != null ? publicQuizzes.size() : 0}">0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    All Quizzes in Database
+                </div>
+                <div class="card-body">
+                    <div th:if="${allQuizzes != null and !allQuizzes.empty}">
+                        <div th:each="quiz : ${allQuizzes}" class="mb-3 p-3 border rounded">
+                            <h6 th:text="${quiz.title}">Title</h6>
+                            <div class="small text-muted">
+                                <strong>ID:</strong> <span th:text="${quiz.id}"></span><br>
+                                <strong>Public:</strong> <span th:text="${quiz.isPublic}"></span><br>
+                                <strong>Enabled:</strong> <span th:text="${quiz.enabled}"></span><br>
+                                <strong>Questions:</strong> <span th:text="${quiz.questionCount}"></span><br>
+                                <strong>Created By:</strong> <span th:text="${quiz.createdBy != null ? quiz.createdBy.username : 'Unknown'}"></span><br>
+                                <strong>Category:</strong> <span th:text="${quiz.category != null ? quiz.category.name : 'None'}"></span>
+                            </div>
+                            <div th:if="${!quiz.isPublic}" class="alert alert-warning mt-2 p-2">
+                                ⚠️ This quiz is NOT public
+                            </div>
+                            <div th:if="${!quiz.enabled}" class="alert alert-danger mt-2 p-2">
+                                ❌ This quiz is NOT enabled
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${allQuizzes == null or allQuizzes.empty}" class="text-muted">
+                        No quizzes found in database.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Public Quizzes (Available to Participants)
+                </div>
+                <div class="card-body">
+                    <div th:if="${publicQuizzes != null and !publicQuizzes.empty}">
+                        <div th:each="quiz : ${publicQuizzes}" class="mb-3 p-3 border rounded bg-light">
+                            <h6 th:text="${quiz.title}">Title</h6>
+                            <div class="small text-muted">
+                                <strong>Questions:</strong> <span th:text="${quiz.questionCount}"></span><br>
+                                <strong>Time Limit:</strong> <span th:text="${quiz.timeLimit}"></span> min<br>
+                                <strong>Difficulty:</strong> <span th:text="${quiz.difficultyLevel}"></span>
+                            </div>
+                            <a th:href="@{/attempt/start/{id}(id=${quiz.id})}" class="btn btn-sm btn-success mt-2">Take This Quiz</a>
+                        </div>
+                    </div>
+                    <div th:if="${publicQuizzes == null or publicQuizzes.empty}" class="alert alert-warning">
+                        ⚠️ No public quizzes available. Check if quizzes are marked as public and enabled.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/dashboard}" class="btn btn-primary">Back to Dashboard</a>
+        <a th:href="@{/quiz/list}" class="btn btn-secondary">Go to Quiz List</a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Testing - QuizMaster</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #e6eeff;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --info: #118ab2;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: none;
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            border: none;
+        }
+
+        .card-header h4 {
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h4 i {
+            margin-right: 0.75rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, var(--success), #05c291);
+            color: white;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, var(--danger), #e63946);
+            color: white;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.875rem 1.75rem;
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.7s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--gray), #5a6268);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        .email-type-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--gray-light);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .email-type-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .email-type-card.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+            box-shadow: var(--shadow);
+        }
+
+        .email-type-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .email-type-card.active .email-type-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .email-type-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .email-type-description {
+            font-size: 0.875rem;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .testing-instructions {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .instruction-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .instruction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .instruction-content h6 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .instruction-content p {
+            color: var(--gray);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .email-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px dashed var(--gray-light);
+            margin-top: 1.5rem;
+        }
+
+        .preview-header {
+            border-bottom: 2px solid var(--gray-light);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-subject {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-meta {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .preview-body {
+            line-height: 1.6;
+            color: var(--dark);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-left: 1rem;
+        }
+
+        .status-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-pending {
+            background: var(--warning);
+            color: black;
+        }
+
+        .status-error {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .testing-instructions {
+                padding: 1.5rem;
+            }
+
+            .instruction-item {
+                flex-direction: column;
+            }
+
+            .instruction-icon {
+                margin-bottom: 0.75rem;
+                margin-right: 0;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-border {
+            animation: spin 0.75s linear infinite;
+        }
+
+        .test-history {
+            margin-top: 2rem;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 10px;
+            background: var(--light);
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            background: var(--primary-light);
+        }
+
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-type {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .history-details {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-icon">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+        <h1 class="header-title">Email Testing Dashboard</h1>
+        <p class="header-subtitle">
+            Test and verify your email functionality across different scenarios and templates
+        </p>
+    </div>
+
+    <!-- Main Testing Card -->
+    <div class="card">
+        <div class="card-header">
+            <h4><i class="fas fa-vial"></i> Email Testing Interface</h4>
+        </div>
+        <div class="card-body">
+            <!-- Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Email Type Selection -->
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i>Select Email Type
+                </label>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="email-type-card active" data-type="simple" onclick="selectEmailType(this)">
+                            <div class="email-type-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="email-type-title">Simple Test</div>
+                            <div class="email-type-description">
+                                Basic SMTP functionality test with minimal content
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="email-type-card" data-type="registration" onclick="selectEmailType(this)">
+                            <div class="email-type-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="email-type-title">Registration</div>
+                            <div class="email-type-description">
+                                Welcome email template for new user registrations
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="email-type-card" data-type="quiz-results" onclick="selectEmailType(this)">
+                            <div class="email-type-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="email-type-title">Quiz Results</div>
+                            <div class="email-type-description">
+                                Performance summary and results notification
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Form -->
+            <form th:action="@{/test-email/send}" method="post" id="emailTestForm">
+                <input type="hidden" id="emailType" name="emailType" value="simple">
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label for="emailAddress" class="form-label">
+                                <i class="fas fa-at"></i>Recipient Email Address
+                            </label>
+                            <input type="email" class="form-control" id="emailAddress" name="emailAddress"
+                                   value="thilagavathi222006@gmail.com" required
+                                   placeholder="Enter recipient email address">
+                            <div class="form-text">All test emails will be sent to this address</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-bolt"></i>Quick Actions
+                            </label>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="useDefaultEmail()">
+                                    <i class="fas fa-magic me-1"></i>Use Default
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearForm()">
+                                    <i class="fas fa-eraser me-1"></i>Clear Form
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Preview -->
+                <div class="email-preview" id="emailPreview">
+                    <div class="preview-header">
+                        <div class="preview-subject" id="previewSubject">Test Email - SMTP Verification</div>
+                        <div class="preview-meta">
+                            To: <span id="previewRecipient">thilagavathi222006@gmail.com</span> •
+                            Type: <span id="previewType">Simple Test</span>
+                        </div>
+                    </div>
+                    <div class="preview-body" id="previewBody">
+                        This is a test email to verify SMTP configuration and basic email functionality.
+                        If you're receiving this, your email service is working correctly.
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i>Send Test Email
+                    </button>
+                    <a th:href="@{/dashboard}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button type="button" class="btn btn-outline-info" onclick="refreshPreview()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Preview
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Testing Instructions -->
+    <div class="testing-instructions">
+        <h5 class="mb-4">
+            <i class="fas fa-graduation-cap me-2"></i>Testing Instructions & Guidelines
+        </h5>
+
+        <div class="instruction-item">
+            <div class="instruction-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="instruction-content">
+                <h6>Simple Test Email</h6>
+                <p>Verifies basic SMTP functionality, server configuration, and delivery capabilities. Use this for initial setup testing.</p>
+            </div>
+        </div>
+
+        <div class="instruction-item">
+            <div class="instruction-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="instruction-content">
+                <h6>Registration Email</h6>
+                <p>Tests the complete registration workflow including welcome messages, verification links, and template rendering.</p>
+            </div>
+        </div>
+
+        <div class="instruction-item">
+            <div class="instruction-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="instruction-content">
+                <h6>Quiz Results Email</h6>
+                <p>Validates performance reporting emails with dynamic content, scores, and personalized feedback templates.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test History (Optional) -->
+    <div class="test-history">
+        <h5 class="mb-3">
+            <i class="fas fa-history me-2"></i>Recent Test History
+        </h5>
+        <div class="history-item">
+            <div class="history-icon">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <div class="history-content">
+                <div class="history-type">Simple Test Email</div>
+                <div class="history-details">Sent to thilagavathi222006@gmail.com</div>
+            </div>
+            <div class="history-time">2 minutes ago</div>
+        </div>
+        <div class="history-item">
+            <div class="history-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="history-content">
+                <div class="history-type">Registration Email</div>
+                <div class="history-details">Sent to test@example.com</div>
+            </div>
+            <div class="history-time">1 hour ago</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Email type selection
+    function selectEmailType(element) {
+        // Remove active class from all cards
+        document.querySelectorAll('.email-type-card').forEach(card => {
+            card.classList.remove('active');
+        });
+
+        // Add active class to clicked card
+        element.classList.add('active');
+
+        // Update hidden input
+        const emailType = element.getAttribute('data-type');
+        document.getElementById('emailType').value = emailType;
+
+        // Update preview
+        refreshPreview();
+    }
+
+    // Update email preview based on selection
+    function refreshPreview() {
+        const emailType = document.getElementById('emailType').value;
+        const recipient = document.getElementById('emailAddress').value;
+
+        // Update preview elements
+        document.getElementById('previewRecipient').textContent = recipient;
+
+        switch(emailType) {
+            case 'simple':
+                document.getElementById('previewSubject').textContent = 'Test Email - SMTP Verification';
+                document.getElementById('previewType').textContent = 'Simple Test';
+                document.getElementById('previewBody').innerHTML = `
+                    <p>This is a test email to verify SMTP configuration and basic email functionality.</p>
+                    <p>If you're receiving this, your email service is working correctly.</p>
+                    <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                `;
+                break;
+
+            case 'registration':
+                document.getElementById('previewSubject').textContent = 'Welcome to QuizMaster!';
+                document.getElementById('previewType').textContent = 'Registration';
+                document.getElementById('previewBody').innerHTML = `
+                    <p>Welcome to QuizMaster! We're excited to have you on board.</p>
+                    <p>Your account has been successfully created and you can now:</p>
+                    <ul>
+                        <li>Take interactive quizzes</li>
+                        <li>Track your learning progress</li>
+                        <li>Compete with other learners</li>
+                    </ul>
+                    <p>Get started by exploring available quizzes in your dashboard.</p>
+                `;
+                break;
+
+            case 'quiz-results':
+                document.getElementById('previewSubject').textContent = 'Your Quiz Results - JavaScript Basics';
+                document.getElementById('previewType').textContent = 'Quiz Results';
+                document.getElementById('previewBody').innerHTML = `
+                    <p>Congratulations on completing the <strong>JavaScript Basics</strong> quiz!</p>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <strong>Your Score:</strong> 85%<br>
+                        <strong>Correct Answers:</strong> 17/20<br>
+                        <strong>Time Taken:</strong> 12:45 minutes
+                    </div>
+                    <p>You're making great progress! Keep learning to improve your skills.</p>
+                `;
+                break;
+        }
+    }
+
+    // Use default email
+    function useDefaultEmail() {
+        document.getElementById('emailAddress').value = 'thilagavathi222006@gmail.com';
+        refreshPreview();
+
+        // Show confirmation
+        showToast('Default email address applied', 'success');
+    }
+
+    // Clear form
+    function clearForm() {
+        document.getElementById('emailAddress').value = '';
+        refreshPreview();
+
+        // Show confirmation
+        showToast('Form cleared successfully', 'info');
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.style.minWidth = '300px';
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close ms-2" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(toast);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 5000);
+    }
+
+    // Form submission handling
+    document.getElementById('emailTestForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const emailAddress = document.getElementById('emailAddress').value;
+
+        // Basic validation
+        if (!emailAddress) {
+            e.preventDefault();
+            showToast('Please enter an email address', 'danger');
+            return false;
+        }
+
+        // Email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailAddress)) {
+            e.preventDefault();
+            showToast('Please enter a valid email address', 'danger');
+            return false;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Sending Email...';
+
+        return true;
+    });
+
+    // Real-time preview updates
+    document.getElementById('emailAddress').addEventListener('input', refreshPreview);
+
+    // Initialize preview on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        refreshPreview();
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + Enter to submit form
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('emailTestForm').requestSubmit();
+            }
+
+            // Escape to clear form
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                clearForm();
+            }
+        });
+    });
+
+    // Simulate test history updates
+    function simulateNewTest() {
+        const historyContainer = document.querySelector('.test-history');
+        const newItem = document.createElement('div');
+        newItem.className = 'history-item';
+        newItem.innerHTML = `
+            <div class="history-icon">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <div class="history-content">
+                <div class="history-type">New Test Email</div>
+                <div class="history-details">Sent to ${document.getElementById('emailAddress').value}</div>
+            </div>
+            <div class="history-time">Just now</div>
+        `;
+
+        historyContainer.appendChild(newItem);
+
+        // Animate the new item
+        newItem.style.opacity = '0';
+        newItem.style.transform = 'translateY(-10px)';
+
+        setTimeout(() => {
+            newItem.style.transition = 'all 0.3s ease';
+            newItem.style.opacity = '1';
+            newItem.style.transform = 'translateY(0)';
+        }, 100);
+    }
+</script>
+</body>
+</html>
