@@ -3,7 +3,7 @@ FROM maven:3.8.5-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -Dmaven.test.skip=true
 
 # Second stage: create the final image
 # Using Eclipse Temurin, the recommended replacement
